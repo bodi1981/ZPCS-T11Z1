@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyFinances.WebApi</name>
+    </assembly>
+    <members>
+        <member name="M:MyFinances.WebApi.Controllers.OperationController.GetOperation(System.Int32)">
+            <summary>
+            Get operation by id
+            </summary>
+            <param name="id">operation id</param>
+            <returns>DataResponse - OperationDto</returns>
+        </member>
+    </members>
+</doc>
