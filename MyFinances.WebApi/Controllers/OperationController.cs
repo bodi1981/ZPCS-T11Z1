@@ -24,13 +24,14 @@ namespace MyFinances.WebApi.Controllers
         }
 
         [HttpGet]
-        public DataResponse<IEnumerable<OperationDto>> GetOperations()
+        public async Task<DataResponse<IEnumerable<OperationDto>>> GetOperations()
         {
             var response = new DataResponse<IEnumerable<OperationDto>>();
 
             try
             {
-                response.Data = _unitOfWork.Operation.GetOperations().ToDtos();
+                var data = await _unitOfWork.Operation.GetOperations();
+                response.Data = data.ToDtos();
             }
             catch (Exception ex)
             {
@@ -42,13 +43,14 @@ namespace MyFinances.WebApi.Controllers
         }
 
         [HttpGet("{records:int:min(1)}/{pageNo:int:min(1)}")]
-        public DataResponse<IEnumerable<OperationDto>> GetOperationsByPage(int records, int pageNo)
+        public async Task<DataResponse<IEnumerable<OperationDto>>> GetOperationsByPage(int records, int pageNo)
         {
             var response = new DataResponse<IEnumerable<OperationDto>>();
 
             try
             {
-                response.Data = _unitOfWork.Operation.GetOperationsbyPage(records, pageNo).ToDtos();
+                var data = await _unitOfWork.Operation.GetOperationsbyPage(records, pageNo);
+                response.Data = data.ToDtos();
             }
             catch (Exception ex)
             {
@@ -66,13 +68,14 @@ namespace MyFinances.WebApi.Controllers
         /// <param name="id">operation id</param>
         /// <returns>DataResponse - OperationDto</returns>
         [HttpGet("{id}")]
-        public DataResponse<OperationDto> GetOperation(int id)
+        public async Task<DataResponse<OperationDto>> GetOperation(int id)
         {
             var response = new DataResponse<OperationDto>();
 
             try
             {
-                response.Data = _unitOfWork.Operation.GetOperation(id)?.ToDto();
+                var data = await _unitOfWork.Operation.GetOperation(id);
+                response.Data = data?.ToDto();
             }
             catch (Exception ex)
             {
@@ -83,15 +86,15 @@ namespace MyFinances.WebApi.Controllers
         }
 
         [HttpPost]
-        public DataResponse<int> AddOperation(OperationDto operationDto)
+        public async Task<DataResponse<int>> AddOperation(OperationDto operationDto)
         {
             var response = new DataResponse<int>();
 
             try
             {
                 var operation = operationDto.ToDao();
-                _unitOfWork.Operation.AddOperation(operation);
-                _unitOfWork.Complete();
+                await _unitOfWork.Operation.AddOperation(operation);
+                await _unitOfWork.Complete();
                 response.Data = operation.Id;
             }
             catch (Exception ex)
@@ -103,14 +106,14 @@ namespace MyFinances.WebApi.Controllers
         }
 
         [HttpPut]
-        public Response UpdateOperation(OperationDto operation)
+        public async Task<Response> UpdateOperation(OperationDto operation)
         {
             var response = new Response();
 
             try
             {
-                _unitOfWork.Operation.UpdateOperation(operation.ToDao());
-                _unitOfWork.Complete();
+                await _unitOfWork.Operation.UpdateOperation(operation.ToDao());
+                await _unitOfWork.Complete();
             }
             catch (Exception ex)
             {
@@ -121,14 +124,14 @@ namespace MyFinances.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public Response RemoveOperation(int id)
+        public async Task<Response> RemoveOperation(int id)
         {
             var response = new Response();
 
             try
             {
-                _unitOfWork.Operation.RemoveOperation(id);
-                _unitOfWork.Complete();
+                await _unitOfWork.Operation.RemoveOperation(id);
+                await _unitOfWork.Complete();
             }
             catch (Exception ex)
             {

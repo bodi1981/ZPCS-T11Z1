@@ -1,4 +1,5 @@
-﻿using MyFinances.WebApi.Models.Domains;
+﻿using Microsoft.EntityFrameworkCore;
+using MyFinances.WebApi.Models.Domains;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,40 +15,40 @@ namespace MyFinances.WebApi.Models.Repositories
             _dbContext = dbContext;
         }
 
-        public IEnumerable<Operation> GetOperations()
+        public async Task<IEnumerable<Operation>> GetOperations()
         {
-            return _dbContext.Operations;
+            return await _dbContext.Operations.ToListAsync();
         }
 
-        public IEnumerable<Operation> GetOperationsbyPage(int records, int pageNo)
+        public async Task<IEnumerable<Operation>> GetOperationsbyPage(int records, int pageNo)
         {
             int skipRecordsNo = (pageNo - 1) * records;
-            return _dbContext.Operations.OrderBy(x => x.Id).Skip(skipRecordsNo).Take(records);
+            return await _dbContext.Operations.OrderBy(x => x.Id).Skip(skipRecordsNo).Take(records).ToListAsync();
         }
 
-        public Operation GetOperation(int id)
+        public async Task<Operation> GetOperation(int id)
         {
-            return _dbContext.Operations.FirstOrDefault(x => x.Id == id);
+            return await _dbContext.Operations.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public void AddOperation(Operation operation)
+        public async Task AddOperation(Operation operation)
         {
             operation.CreatedDate = DateTime.Now;
-            _dbContext.Operations.Add(operation);
+            await _dbContext.Operations.AddAsync(operation);
         }
 
-        public void UpdateOperation(Operation operation)
+        public async Task UpdateOperation(Operation operation)
         {
-            var operationToUpdate = _dbContext.Operations.FirstOrDefault(x => x.Id == operation.Id);
+            var operationToUpdate = await _dbContext.Operations.FirstOrDefaultAsync(x => x.Id == operation.Id);
             operationToUpdate.Name = operation.Name;
             operationToUpdate.Description = operation.Description;
             operationToUpdate.Value = operation.Value;
-            operation.CategoryId = operation.CategoryId;
+            operationToUpdate.CategoryId = operation.CategoryId;
         }
 
-        public void RemoveOperation(int id)
+        public async Task RemoveOperation(int id)
         {
-            var operationToRemove = _dbContext.Operations.FirstOrDefault(x => x.Id == id);
+            var operationToRemove = await _dbContext.Operations.FirstOrDefaultAsync(x => x.Id == id);
             _dbContext.Operations.Remove(operationToRemove);
         }
     }

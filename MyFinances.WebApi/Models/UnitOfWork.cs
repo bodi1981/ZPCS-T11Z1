@@ -18,9 +18,9 @@ namespace MyFinances.WebApi.Models
         }
 
         public OperationRepository Operation { get; set; }
-        public void Complete()
+        public async Task Complete()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
